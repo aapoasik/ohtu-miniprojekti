@@ -1,9 +1,12 @@
 class Todo:
-    def __init__(self, id, content, done):
+    def __init__(self, id, key, title, author, year, publisher, address):
         self.id = id
-        self.content = content
-        self.done = done
+        self.key = key
+        self.title = title
+        self.author = author
+        self.year = year
+        self.publisher = publisher
+        self.address = address
 
     def __str__(self):
-        is_done = "done" if self.done else "not done"
-        return f"{self.content}, {is_done}"
+        return f"{self.title}, {self.author}, {self.year}, {self.publisher}"
