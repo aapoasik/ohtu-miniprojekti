@@ -1,0 +1,74 @@
+
+{% extends "layout.html" %}
+
+{% block title %}
+Create a new article
+{% endblock %}
+
+{% block body %}
+
+<h2>Create an article citation</h2>
+
+<form action="/create_article" method="post">
+  {% with messages = get_flashed_messages() %}
+    {% if messages %}
+      <ul>
+      {% for message in messages %}
+        <li>{{ message }}</li>
+      {% endfor %}
+      </ul>
+    {% endif %}
+  {% endwith %}
+
+  <div>
+    <label for="key">Key:</label>
+    <input type="text" name="key" required>
+  </div>
+
+  <div>
+    <label for="author">Author:</label>
+    <input type="text" name="author" required>
+  </div>
+
+  <div>
+    <label for="title">Title:</label>
+    <input type="text" name="title" required>
+  </div>
+
+  <div>
+    <label for="year">Year:</label>
+    <input type="text" name="year" required>
+  </div>
+
+  <div>
+    <label for="journal">Journal:</label>
+    <input type="text" name="journal" required>
+  </div>
+
+  <div>
+    <label for="pages">Pages:</label>
+    <input type="text" name="pages">
+  </div>
+
+  <div>
+    <label for="volume">Volume:</label>
+    <input type="text" name="volume">
+  </div>
+
+  <div>
+    <label for="month">Month:</label>
+    <input type="text" name="month">
+  </div>
+
+  <div>
+    <label for="doi">DOI:</label>
+    <input type="text" name="doi">
+  </div>
+
+  <br>
+  <button type="submit">
+    Create
+  </button>
+</form>
+
+{% endblock %}

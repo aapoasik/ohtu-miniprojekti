@@ -3,6 +3,7 @@ body %}
 
 <h2>Citation app</h2>
 
+<h3>Books</h3>
 
 <ul>
   {% for todo in todos %}
@@ -12,8 +13,20 @@ body %}
   {% endfor %}
 </ul>
 
+<h3>Articles</h3>
+
+<ul>
+  {% for article in articles %}
+  <li>{{ article }}</li>
+  {% endfor %}
+</ul>
+
 <div>
-  <a href="/new_todo">Create new citation</a>
+  <a href="/new_todo">Create new book citation</a>
+</div>
+
+<div>
+  <a href="/new_article">Create new article citation</a>
 </div>
 
 {% endblock %}
