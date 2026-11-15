@@ -3,12 +3,11 @@ from db_helper import reset_db
 from repositories.todo_repository import get_todos, get_articles, create_todo, create_article
 from config import app, test_env
 
-
 @app.route("/")
 def index():
     todos = get_todos()
     articles = get_articles()
-    return render_template("index.html", todos=todos, articles=articles) 
+    return render_template("index.html", todos=todos, articles=articles)
 
 @app.route("/new_todo")
 def new():

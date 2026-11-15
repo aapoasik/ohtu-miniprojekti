@@ -8,9 +8,7 @@ def get_todos():
         SELECT id, key, title, author, year, publisher, address
         FROM Books
     """))
-
     todos = result.fetchall()
-
     return [
         Todo(
             todo[0], todo[1], todo[2], todo[3],
@@ -24,7 +22,6 @@ def create_todo(key, title, author, year, publisher, address):
         INSERT INTO Books (key, title, author, year, publisher, address)
         VALUES (:key, :title, :author, :year, :publisher, :address)
     """)
-
     db.session.execute(sql, {
         "key": key,
         "title": title,
@@ -33,9 +30,8 @@ def create_todo(key, title, author, year, publisher, address):
         "publisher": publisher,
         "address": address
     })
-
     db.session.commit()
-
+    
 def create_article(key, title, author, year, journal, pages, volume, month, doi):
     sql = text("""
         INSERT INTO Articles
