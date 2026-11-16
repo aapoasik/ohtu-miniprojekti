@@ -7,7 +7,7 @@ Test Setup       Reset Todos
 *** Test Cases ***
 After adding a book citation, it is displayed on the front page
     Go To  ${HOME_URL}
-    Click  text=Create new citation
+    Click  text=Create new book citation
     Fill Text  [name="key"]  Doe2024
     Fill Text  [name="author"]  Jane Doe
     Fill Text  [name="title"]  Introduction to Programming

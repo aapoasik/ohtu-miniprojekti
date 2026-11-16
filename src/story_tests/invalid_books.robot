@@ -7,7 +7,7 @@ Test Setup       Reset Todos
 *** Test Cases ***
 Adding a book citation without a key is not allowed
     Go To  ${HOME_URL}
-    Click  text=Create new citation
+    Click  text=Create new book citation
     Fill Text  [name="author"]  Jane Doe
     Fill Text  [name="title"]  Introduction to Programming
     Fill Text  [name="year"]  2024
@@ -17,7 +17,7 @@ Adding a book citation without a key is not allowed
 
 Adding a book citation without an author is not allowed
     Go To  ${HOME_URL}
-    Click  text=Create new citation
+    Click  text=Create new book citation
     Fill Text  [name="key"]  Doe2024
     Fill Text  [name="title"]  Introduction to Programming
     Fill Text  [name="year"]  2024
@@ -27,7 +27,7 @@ Adding a book citation without an author is not allowed
 
 Adding a book citation without a title is not allowed
     Go To  ${HOME_URL}
-    Click  text=Create new citation
+    Click  text=Create new book citation
     Fill Text  [name="key"]  Doe2024
     Fill Text  [name="author"]  Jane Doe
     Fill Text  [name="year"]  2024
@@ -37,7 +37,7 @@ Adding a book citation without a title is not allowed
 
 Adding a book citation without a year is not allowed
     Go To  ${HOME_URL}
-    Click  text=Create new citation
+    Click  text=Create new book citation
     Fill Text  [name="key"]  Doe2024
     Fill Text  [name="author"]  Jane Doe
     Fill Text  [name="title"]  Introduction to Programming
@@ -57,7 +57,7 @@ Adding a book citation without a publisher is not allowed
 
 Adding a book citation without an address is allowed
     Go To  ${HOME_URL}
-    Click  text=Create new citation
+    Click  text=Create new book citation
     Fill Text  [name="key"]  Doe2024
     Fill Text  [name="author"]  Jane Doe
     Fill Text  [name="title"]  Introduction to Programming
