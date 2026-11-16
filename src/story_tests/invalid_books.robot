@@ -47,7 +47,7 @@ Adding a book citation without a year is not allowed
 
 Adding a book citation without a publisher is not allowed
     Go To  ${HOME_URL}
-    Click  text=Create new citation
+    Click  text=Create new book citation
     Fill Text  [name="key"]  Doe2024
     Fill Text  [name="author"]  Jane Doe
     Fill Text  [name="title"]  Introduction to Programming
