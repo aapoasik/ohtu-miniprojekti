@@ -9,15 +9,15 @@ def index():
     articles = get_articles()
     return render_template("index.html", todos=todos, articles=articles)
 
-@app.route("/new_todo")
+@app.route("/new_book")
 def new():
-    return render_template("new_todo.html")
+    return render_template("new_book.html")
 
 @app.route("/new_article")
 def new_article():
     return render_template("new_article.html")
 
-@app.route("/create_todo", methods=["POST"])
+@app.route("/create_book", methods=["POST"])
 def todo_creation():
     key = request.form.get("key")
     author = request.form.get("author")
