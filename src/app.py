@@ -2,6 +2,7 @@ from flask import redirect, render_template, request, jsonify, flash
 from db_helper import reset_db
 from repositories.todo_repository import get_todos, get_articles, create_todo, create_article
 from config import app, test_env
+import calendar
 
 @app.route("/")
 def index():
@@ -49,11 +50,27 @@ def article_creation():
     volume = request.form.get("volume")
     month = request.form.get("month")
     doi = request.form.get("doi")
+    months = list(calendar.month_name[1:])
 
     try:
         if not all([key, author, title, year, journal]):
             raise ValueError("Please fill in all required fields")
     
+        if not all([key.strip(), author.strip(), title.strip(), year.strip(), journal.strip()]):
+            raise ValueError("Must not contain only spaces")
+        
+        if len(year) != 4 or not year.isdigit():
+            raise ValueError("Enter only 4 digits")
+        
+        if month and month not in months:
+            raise ValueError("Invalid month")
+        
+        if volume and not volume.isdigit():
+            raise ValueError("Invalid volume")
+        
+        if doi and (not doi.startswith("10.") or "/" not in doi):
+            raise ValueError("invalid doi")
+
     # Tallennetaan artikkeli tietokantaan
         create_article(key, title, author, year, journal, pages, volume, month, doi)
         return redirect("/")
