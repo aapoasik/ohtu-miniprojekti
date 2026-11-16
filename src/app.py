@@ -36,7 +36,7 @@ def todo_creation():
 
     except Exception as error:
         flash(str(error))
-        return redirect("/new_todo")
+        return redirect("/new_book")
     
 @app.route("/create_article", methods=["POST"])
 def article_creation():
