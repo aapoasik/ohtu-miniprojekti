@@ -6,7 +6,7 @@ CREATE TABLE Books (
   author TEXT NOT NULL,
   publisher TEXT NOT NULL,
   address TEXT
-  )
+  );
 
 CREATE TABLE Articles (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -19,4 +19,4 @@ CREATE TABLE Articles (
   volume TEXT,
   month TEXT,
   doi TEXT
-  )
+  );

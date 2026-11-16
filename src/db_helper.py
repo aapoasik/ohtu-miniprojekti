@@ -3,9 +3,9 @@ from sqlalchemy import text
 import os
 
 def reset_db():
-  print(f"Clearing contents from tables")
-  sql = text(f"DELETE FROM *")
-  db.session.execute(sql)
+  print("Clearing contents from table Books")
+  db.session.execute(text("DELETE FROM Books"))
+  db.session.execute(text("DELETE FROM Articles"))
   db.session.commit()
 
 def tables():
@@ -37,11 +37,11 @@ def setup_db():
   schema_path = os.path.join(os.path.dirname(__file__), 'schema.sql')
   with open(schema_path, 'r') as f:
     schema_sql = f.read().strip()
-  
-  sql = text(schema_sql)
-  db.session.execute(sql)
-  db.session.commit()
+  for statement in schema_sql.split(";"):
+    if statement.strip():
+      db.session.execute(text(statement))
 
+  db.session.commit()
 if __name__ == "__main__":
     with app.app_context():
       setup_db()
