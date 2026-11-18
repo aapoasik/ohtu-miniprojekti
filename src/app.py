@@ -74,7 +74,7 @@ def article_creation():
             raise ValueError("Invalid pages")
         
         if doi and (not doi.strip() or not "10." in doi or not "/" in doi):
-            raise ValueError("Invalid doi")
+            raise ValueError("invalid doi")
 
     # Tallennetaan artikkeli tietokantaan
         create_article(key, title, author, year, journal, pages, volume, month, doi)
