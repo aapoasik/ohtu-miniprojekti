@@ -1,4 +1,4 @@
-class Todo:
+class Book:
     def __init__(self, id, key, title, author, year, publisher, address):
         self.id = id
         self.key = key

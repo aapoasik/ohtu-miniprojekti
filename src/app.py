@@ -1,14 +1,14 @@
 from flask import redirect, render_template, request, jsonify, flash
 from db_helper import reset_db
-from repositories.todo_repository import get_todos, get_articles, create_todo, create_article
+from repositories.todo_repository import get_books, get_articles, create_book, create_article
 from config import app, test_env
 import calendar
 
 @app.route("/")
 def index():
-    todos = get_todos()
+    books = get_books()
     articles = get_articles()
-    return render_template("index.html", todos=todos, articles=articles)
+    return render_template("index.html", books=books, articles=articles)
 
 @app.route("/new_book")
 def new():
@@ -19,7 +19,7 @@ def new_article():
     return render_template("new_article.html")
 
 @app.route("/create_book", methods=["POST"])
-def todo_creation():
+def books_creation():
     key = request.form.get("key")
     author = request.form.get("author")
     title = request.form.get("title")
@@ -31,7 +31,7 @@ def todo_creation():
         if not all([key, author, title, year, publisher]):
             raise ValueError("Please fill in all required fields")
 
-        create_todo(key, title, author, year, publisher, address)
+        create_book(key, title, author, year, publisher, address)
 
         return redirect("/")
 

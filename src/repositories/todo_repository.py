@@ -1,23 +1,23 @@
 from config import db
 from sqlalchemy import text
 from entities.article import Article
-from entities.todo import Todo
+from entities.book import Book
 
-def get_todos():
+def get_books():
     result = db.session.execute(text("""
         SELECT id, key, title, author, year, publisher, address
         FROM Books
     """))
-    todos = result.fetchall()
+    books = result.fetchall()
     return [
-        Todo(
-            todo[0], todo[1], todo[2], todo[3],
-            todo[4], todo[5], todo[6]
+        Book(
+            book[0], book[1], book[2], book[3],
+            book[4], book[5], book[6]
         )
-        for todo in todos
+        for book in books
     ]
 
-def create_todo(key, title, author, year, publisher, address):
+def create_book(key, title, author, year, publisher, address):
     sql = text("""
         INSERT INTO Books (key, title, author, year, publisher, address)
         VALUES (:key, :title, :author, :year, :publisher, :address)
