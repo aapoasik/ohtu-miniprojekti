@@ -1,6 +1,6 @@
 [Linkki sovellukseen](https://route-ohjelmistotuotanto-lahiopetus-2026-9.ext.okd-cs-test-0.k8s.cs.helsinki.fi)
 
-[Linkki backlogiin](https://github.com/users/aapoasik/projects/4/views/1)
+[Linkki backlogiin](https://github.com/users/aapoasik/projects/4/views/1?filterQuery=repo%3Aaapoasik%2Fohtu-miniprojekti+label%3A%22user+story%22)
 
 [Linkki Actionsiin](https://github.com/aapoasik/ohtu-miniprojekti/actions)
 
