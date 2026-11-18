@@ -4,7 +4,7 @@ Kirjataan hyväksymiskriteerit user storyihin.
 
 # Stop
 
-Lakataan tapaamisten väliin jättäminen ilman, että sanoo mitään.
+Lopetetaan tapaamisten väliin jättäminen ilman, että sanoo mitään.
 
 # Continue
 
