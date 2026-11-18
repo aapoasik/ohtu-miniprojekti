@@ -71,3 +71,56 @@ def get_articles():
         )
         for article in articles
     ]
+
+def get_book(book_id):
+    sql = text("""
+            SELECT id, key, title, author, year, publisher, address
+            FROM Books WHERE id = :id
+        """)
+    result = db.session.execute(sql, {"id": book_id})
+    book = result.fetchone()
+    return book
+
+def update_book(book_id, key, title, author, year, publisher, address):
+    sql = text("""
+            UPDATE Books SET key = :key, title = :title, author = :author, year = :year, publisher = :publisher, address = :address
+            WHERE id = :id
+        """)
+    db.session.execute(sql, {
+        "key": key,
+        "title": title,
+        "author": author,
+        "year": year,
+        "publisher": publisher,
+        "address": address,
+        "id": book_id
+        })
+    db.session.commit()
+
+def get_article(article_id):
+    sql = text("""
+            SELECT id, key, title, author, year, journal, pages, volume, month, doi
+            FROM Articles WHERE id = :id
+        """)
+    result = db.session.execute(sql, {"id": article_id})
+    article = result.fetchone()
+    return article
+
+def update_article(article_id, key, title, author, year, journal, pages, volume, month, doi):
+    sql = text("""
+            UPDATE Articles SET key = :key, title = :title, author = :author, year = :year, journal = :journal, pages = :pages, volume = :volume, month = :month, doi = :doi
+            WHERE id = :id
+        """)
+    db.session.execute(sql, {
+        "key": key,
+        "title": title,
+        "author": author,
+        "year": year,
+        "journal": journal,
+        "pages": pages,
+        "volume": volume,
+        "month": month,
+        "doi": doi,
+        "id": article_id
+        })
+    db.session.commit()
