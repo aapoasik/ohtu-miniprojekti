@@ -50,7 +50,9 @@ def article_creation():
     volume = request.form.get("volume")
     month = request.form.get("month")
     doi = request.form.get("doi")
+
     months = list(calendar.month_name[1:])
+    months_abbreviated = [f"{month[:4]}." if len(month) > 4 else month for month in months]
 
     try:
         if not all([key, author, title, year, journal]):
@@ -62,14 +64,17 @@ def article_creation():
         if len(year) != 4 or not year.isdigit():
             raise ValueError("Enter only 4 digits")
         
-        if month and month not in months:
-            raise ValueError("Invalid month")
-        
         if volume and not volume.isdigit():
             raise ValueError("Invalid volume")
         
-        if doi and (not doi.startswith("10.") or "/" not in doi):
-            raise ValueError("invalid doi")
+        if month and (not month.strip() or (month not in months and month not in months_abbreviated)):
+            raise ValueError("Invalid month")
+        
+        if pages and (not pages.strip() or not any(page.isdigit() for page in pages)):
+            raise ValueError("Invalid pages")
+        
+        if doi and (not doi.strip() or not "10." in doi or not "/" in doi):
+            raise ValueError("Invalid doi")
 
     # Tallennetaan artikkeli tietokantaan
         create_article(key, title, author, year, journal, pages, volume, month, doi)
