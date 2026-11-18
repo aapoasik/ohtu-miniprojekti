@@ -1,10 +1,10 @@
 # Start
 
-Kirjataan hyväksymiskriteerit taskeihin.
+Kirjataan hyväksymiskriteerit user storyihin.
 
 # Stop
 
-Ilmoitetaan aina, jos ei pääse tapaamiseen.
+Lakataan tapaamisten väliin jättäminen ilman, että sanoo mitään.
 
 # Continue
 
