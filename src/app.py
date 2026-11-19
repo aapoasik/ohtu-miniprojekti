@@ -1,6 +1,6 @@
 from flask import redirect, render_template, request, jsonify, flash
 from db_helper import reset_db
-from repositories.todo_repository import get_books, get_articles, create_book, create_article, get_book, update_book, get_article, update_article
+from repositories.todo_repository import get_books, get_articles, create_book, create_article, get_book, update_book, get_article, update_article, remove_book, remove_article
 from config import app, test_env
 import calendar
 
@@ -153,6 +153,30 @@ def edit_article(article_id):
         except Exception as error:
             flash(str(error))
             return redirect(f"/edit_article/{article_id}")
+
+@app.route("/remove_book/<int:book_id>", methods=["GET", "POST"])
+def delete_book(book_id):
+    book = get_book(book_id)
+
+    if request.method == "GET":
+        return render_template("remove_book.html", book=book)
+
+    if request.method == "POST":
+        if "continue" in request.form:
+            remove_book(book_id)
+        return redirect("/")
+
+@app.route("/remove_article/<int:article_id>", methods=["GET", "POST"])
+def delete_article(article_id):
+    article = get_article(article_id)
+
+    if request.method == "GET":
+        return render_template("remove_article.html", article=article)
+
+    if request.method == "POST":
+        if "continue" in request.form:
+            remove_article(article_id)
+        return redirect("/")
     
 # testausta varten oleva reitti
 if test_env:

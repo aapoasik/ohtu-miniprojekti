@@ -1,4 +1,4 @@
-{% extends "layout.html" %} {% block title %} Todo app {% endblock %} {% block
+{% extends "layout.html" %} {% block title %} Citation app {% endblock %} {% block
 body %}
 
 <h2>Citation app</h2>
@@ -9,7 +9,7 @@ body %}
   <p>{{ book }}</p>
   <p>
   <a href="/edit_book/{{ book.id }}">Edit</a> |
-  <a href="/remove/{{ book.id }}">Delete</a>
+  <a href="/remove_book/{{ book.id }}">Delete</a>
   </p>
   {% endfor %}
 
@@ -19,7 +19,7 @@ body %}
 {% for article in articles %}
   <p>{{ article }}</p>
   <a href="/edit_article/{{ article.id }}">Edit</a> |
-  <a href="/remove/{{ article.id }}">Delete</a>
+  <a href="/remove_article/{{ article.id }}">Delete</a>
   {% endfor %}
 
 <div>

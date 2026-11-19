@@ -124,3 +124,19 @@ def update_article(article_id, key, title, author, year, journal, pages, volume,
         "id": article_id
         })
     db.session.commit()
+
+def remove_book(book_id):
+    sql = text("""
+            DELETE FROM Books WHERE id = :id
+            """)
+    db.session.execute(sql, {
+            "id": book_id})
+    db.session.commit()
+
+def remove_article(article_id):
+    sql = text("""
+            DELETE FROM Articles WHERE id = :id
+            """)
+    db.session.execute(sql, {
+            "id": article_id})
+    db.session.commit()
