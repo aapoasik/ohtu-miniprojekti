@@ -1,5 +1,7 @@
-{% extends "layout.html" %} {% block title %} Todo app {% endblock %} {% block
-body %}
+
+{% extends "layout.html" %}
+{% block title %} Todo app {% endblock %}
+{% block body %}
 
 <h2>Citation app</h2>
 
@@ -15,11 +17,13 @@ body %}
 </form>
 
 <ul>
-  {% for todo in todos %}
-  <li style="display: flex">
-    <div>{{ todo }}</div>
-  </li>
-  {% endfor %}
+    {% for book in books %}
+    <li>
+        <p>{{ book }}</p>
+        <a href="/edit_book/{{ book.id }}">Edit</a> |
+        <a href="/remove_book/{{ book.id }}">Delete</a>
+    </li>
+    {% endfor %}
 </ul>
 
 <h3>Articles</h3>
@@ -34,17 +38,21 @@ body %}
 </form>
 
 <ul>
-  {% for article in articles %}
-  <li>{{ article }}</li>
-  {% endfor %}
+    {% for article in articles %}
+    <li>
+        <p>{{ article }}</p>
+        <a href="/edit_article/{{ article.id }}">Edit</a> |
+        <a href="/remove_article/{{ article.id }}">Delete</a>
+    </li>
+    {% endfor %}
 </ul>
 
 <div>
-  <a href="/new_todo">Create new book citation</a>
+    <a href="/new_book">Create new book citation</a>
 </div>
 
 <div>
-  <a href="/new_article">Create new article citation</a>
+    <a href="/new_article">Create new article citation</a>
 </div>
 
 {% endblock %}

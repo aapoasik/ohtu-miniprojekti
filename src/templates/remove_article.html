@@ -1,0 +1,17 @@
+{% extends "layout.html" %}
+
+{% block title %}
+Remove an article citation
+{% endblock %}
+
+{% block body %}
+<h1>Remove an article citation</h1>
+
+  <form action="/remove_article/{{ article.id }}" method="post">
+    <p>
+      Do you want to remove article citation?
+    </p>
+    <input type="submit" name="continue" value="Continue" />
+    <input type="submit" name="cancel" value="Cancel" />
+  </form>
+{% endblock %}
