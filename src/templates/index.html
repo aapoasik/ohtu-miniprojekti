@@ -5,6 +5,15 @@ body %}
 
 <h3>Books</h3>
 
+<form action="/" method="get">
+    <label>Sort books:</label>
+    <select name="books_order" onchange="this.form.submit()">
+        <option value="asc" {% if books_order == "asc" %}selected{% endif %}>A-Ö</option>
+        <option value="desc" {% if books_order == "desc" %}selected{% endif %}>Ö-A</option>
+    </select>
+    <input type="hidden" name="articles_order" value="{{ articles_order }}">
+</form>
+
 <ul>
   {% for todo in todos %}
   <li style="display: flex">
@@ -14,6 +23,15 @@ body %}
 </ul>
 
 <h3>Articles</h3>
+
+<form action="/" method="get">
+    <label>Sort articles:</label>
+    <select name="articles_order" onchange="this.form.submit()">
+        <option value="asc" {% if articles_order == "asc" %}selected{% endif %}>A-Ö</option>
+        <option value="desc" {% if articles_order == "desc" %}selected{% endif %}>Ö-A</option>
+    </select>
+    <input type="hidden" name="books_order" value="{{ books_order }}">
+</form>
 
 <ul>
   {% for article in articles %}

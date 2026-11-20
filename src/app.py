@@ -7,8 +7,29 @@ from config import app, test_env
 def index():
     todos = get_todos()
     articles = get_articles()
-    return render_template("index.html", todos=todos, articles=articles)
 
+    books_order = request.args.get("books_order", "asc")
+    articles_order = request.args.get("articles_order", "asc")
+
+    todos = sorted(
+        todos,
+        key=lambda todo: todo.title.casefold(),
+        reverse=(books_order == "desc")
+    )
+
+    articles = sorted(
+        articles,
+        key=lambda article: article.title.casefold(),
+        reverse=(articles_order == "desc")
+    )
+
+    return render_template(
+        "index.html",
+        todos=todos,
+        articles=articles,
+        books_order=books_order,
+        articles_order=articles_order
+    ) 
 @app.route("/new_todo")
 def new():
     return render_template("new_todo.html")
