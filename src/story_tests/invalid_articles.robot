@@ -59,6 +59,18 @@ Adding an article with an invalid DOI is not allowed
     Fill Text  [name="title"]  Introduction to AI
     Fill Text  [name="year"]  2024
     Fill Text  [name="journal"]  Journal of Computer Science
-    Fill Text  [name="doi"]  invalid-doi
+    Fill Text  [name="doi"]  invalid doi
     Click  button >> text=Create
     Get Text  body  *=  invalid doi
+
+Adding an article with invalid pages is not allowed
+    Go To  ${HOME_URL}
+    Click  text=Create new article citation
+    Fill Text  [name="key"]  Smith2024
+    Fill Text  [name="author"]  John Smith
+    Fill Text  [name="title"]  Introduction to AI
+    Fill Text  [name="year"]  2024
+    Fill Text  [name="journal"]  Journal of Computer Science
+    Fill Text  [name="pages"]  Invalid pages
+    Click  button >> text=Create
+    Get Text  body  *=  Invalid pages
