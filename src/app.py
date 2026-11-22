@@ -1,4 +1,4 @@
-from flask import redirect, render_template, request, jsonify, flash
+from flask import redirect, render_template, request, jsonify, flash, Flask, Response
 from db_helper import reset_db
 from repositories.todo_repository import get_books, get_articles, create_book, create_article, get_book, update_book, get_article, update_article, remove_book, remove_article
 from config import app, test_env
@@ -215,6 +215,40 @@ def delete_article(article_id):
             remove_article(article_id)
         return redirect("/")
     
+@app.route("/download")
+def download():
+    books = get_books()
+    articles = get_articles()
+
+    file_content = """"""
+
+    for book in books:
+        file_content += f"""
+@book{{{book.key},
+    author = {{{book.author}}},
+    title = {{{book.title}}},
+    publisher = {{{book.publisher}}},
+    year = {{{book.year}}},
+    address = {{{book.address}}}
+    
+}}"""
+
+    for article in articles:
+        file_content += f"""
+@book{{{article.key},
+    author = {{{article.author}}},
+    title = {{{article.title}}},
+    journal = {{{article.journal}}},
+    year = {{{article.year}}},
+    volume = {{{article.volume}}},
+    pages = {{{article.pages}}},
+    month = {{{article.month}}},
+    doi = {{{article.doi}}}
+
+}}"""
+
+    return Response(file_content, mimetype="application/x-bibtex", headers={"Content-Disposition": "attachment; filename=references.bib"})
+
 # testausta varten oleva reitti
 if test_env:
     @app.route("/reset_db")
