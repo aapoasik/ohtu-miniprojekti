@@ -89,7 +89,7 @@ def article_creation():
     doi = request.form.get("doi")
 
     months = list(calendar.month_name[1:])
-    months_abbreviated = [f"{month[:3]}." if len(month) > 4 else month for month in months]
+    months_abbreviated = ["Sept." if month == "September" else f"{month[:3]}." if len(month) > 4 else month for month in months]
 
     try:
         if not all([key, author, title, year, journal]):
