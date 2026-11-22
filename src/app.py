@@ -163,25 +163,29 @@ def edit_article(article_id):
         volume = request.form.get("volume")
         month = request.form.get("month")
         doi = request.form.get("doi")
+
         months = list(calendar.month_name[1:])
         months_abbreviated = ["Sept." if month_name == "September" else f"{month_name[:3]}." if len(month_name) > 4 else month_name for month_name in months]
 
         try:
             if not all([key, author, title, year, journal]):
                 raise ValueError("Please fill in all required fields")
-                
+        
             if not all([key.strip(), author.strip(), title.strip(), year.strip(), journal.strip()]):
                 raise ValueError("Must not contain only spaces")
-                    
+            
             if len(year) != 4 or not year.isdigit():
                 raise ValueError("Enter only 4 digits")
-                    
-            if month and (not month.strip() or (month not in months and month not in months_abbreviated)):
-                raise ValueError("Invalid month")
-                    
+            
             if volume and not volume.isdigit():
                 raise ValueError("Invalid volume")
-                    
+            
+            if month and (not month.strip() or (month not in months and month not in months_abbreviated)):
+                raise ValueError("Invalid month")
+            
+            if pages and (not pages.strip() or not any(page.isdigit() for page in pages)):
+                raise ValueError("Invalid pages")
+            
             if doi and (not doi.strip() or not "10." in doi or not "/" in doi):
                 raise ValueError("invalid doi")
             
