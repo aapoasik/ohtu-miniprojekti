@@ -20,8 +20,24 @@
     {% for book in books %}
     <li>
         <p>{{ book }}</p>
+
+        {% if selected_book and selected_book_id == book.id %}
+            <div>
+                <pre>
+@book&#123;{{ book.key }},
+    author = &#123;{{ book.author }}&#125;,
+    title = &#123;{{ book.title }}&#125;,
+    publisher = &#123;{{ book.publisher }}&#125;,
+    year = &#123;{{ book.year }}&#125;,
+    address = &#123;{{ book.address }}&#125;
+&#125;
+                </pre>
+            </div>
+        {% endif %}
+
         <a href="/edit_book/{{ book.id }}">Edit</a> |
-        <a href="/remove_book/{{ book.id }}">Delete</a>
+        <a href="/remove_book/{{ book.id }}">Delete</a> |
+        <a href="/?book={{ book.id }}">View BibTeX</a>
     </li>
     {% endfor %}
 </ul>
@@ -41,8 +57,28 @@
     {% for article in articles %}
     <li>
         <p>{{ article }}</p>
+
+        {% if selected_article and selected_article_id == article.id %}
+            <div>
+                <pre>
+@article&#123;{{ article.key }},
+    author = &#123;{{ article.author }}&#125;,
+    title = &#123;{{ article.title }}&#125;,
+    year = &#123;{{ article.year }}&#125;,
+    journal = &#123;{{ article.journal }}&#125;
+    volume = &#123;{{ article.author }}&#125;,
+    number = &#123;{{ article.number }}&#125;,
+    pages = &#123;{{ article.pages }}&#125;,
+    month = &#123;{{ article.month }}&#125;
+    doi = &#123;{{ article.doi }}&#125;,
+&#125;
+                </pre>
+            </div>
+        {% endif %}
+
         <a href="/edit_article/{{ article.id }}">Edit</a> |
-        <a href="/remove_article/{{ article.id }}">Delete</a>
+        <a href="/remove_article/{{ article.id }}">Delete</a> |
+        <a href="/?article={{ article.id }}">View BibTeX</a>
     </li>
     {% endfor %}
 </ul>

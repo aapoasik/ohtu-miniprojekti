@@ -11,6 +11,18 @@ def index():
 
     books_order = request.args.get("books_order", "asc")
     articles_order = request.args.get("articles_order", "asc")
+    selected_book_id = request.args.get("book", type=int)
+    selected_article_id = request.args.get("article", type=int)
+
+    selected_book = next(
+        (book for book in books if book.id == selected_book_id),
+        None
+    )
+
+    selected_article = next(
+        (article for article in articles if article.id == selected_article_id),
+        None
+    )
 
     books = sorted(
         books,
@@ -29,7 +41,11 @@ def index():
         books=books,
         articles=articles,
         books_order=books_order,
-        articles_order=articles_order
+        articles_order=articles_order,
+        selected_book=selected_book,
+        selected_book_id=selected_book_id,
+        selected_article=selected_article,
+        selected_article_id=selected_article_id
     )
 
 @app.route("/new_book")
