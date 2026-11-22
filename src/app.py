@@ -89,7 +89,7 @@ def article_creation():
     doi = request.form.get("doi")
 
     months = list(calendar.month_name[1:])
-    months_abbreviated = ["Sept." if month == "September" else f"{month[:3]}." if len(month) > 4 else month for month in months]
+    months_abbreviated = ["Sept." if month_name == "September" else f"{month_name[:3]}." if len(month_name) > 4 else month_name for month_name in months]
 
     try:
         if not all([key, author, title, year, journal]):
@@ -164,6 +164,7 @@ def edit_article(article_id):
         month = request.form.get("month")
         doi = request.form.get("doi")
         months = list(calendar.month_name[1:])
+        months_abbreviated = ["Sept." if month_name == "September" else f"{month_name[:3]}." if len(month_name) > 4 else month_name for month_name in months]
 
         try:
             if not all([key, author, title, year, journal]):
@@ -175,13 +176,13 @@ def edit_article(article_id):
             if len(year) != 4 or not year.isdigit():
                 raise ValueError("Enter only 4 digits")
                     
-            if month and month not in months:
+            if month and (not month.strip() or (month not in months and month not in months_abbreviated)):
                 raise ValueError("Invalid month")
                     
             if volume and not volume.isdigit():
                 raise ValueError("Invalid volume")
                     
-            if doi and (not doi.startswith("10.") or "/" not in doi):
+            if doi and (not doi.strip() or not "10." in doi or not "/" in doi):
                 raise ValueError("invalid doi")
             
             update_article(article_id, key, title, author, year, journal, pages, volume, month, doi)
