@@ -9,14 +9,14 @@ class TestBibtexValidation(unittest.TestCase):
         app.config["TESTING"] = True
 
         with app.app_context():
-            setup_db()
+            db_helper.setup_db()
 
         self.client = app.test_client()
 
     def tearDown(self):
         with app.app_context():
             reset_db()
-            
+
     def test_bibtex_file(self):
             response = self.client.get("/download")
 
