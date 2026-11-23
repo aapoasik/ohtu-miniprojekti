@@ -9,4 +9,7 @@ class Book:
         self.address = address
 
     def __str__(self):
-        return f"{self.title}, {self.author}, {self.year}, {self.publisher}"
+        reference = f"{self.title}, {self.author}, {self.year}, {self.publisher}"
+        if self.address:
+            reference += f", {self.address}"
+        return reference
