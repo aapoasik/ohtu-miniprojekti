@@ -18,7 +18,7 @@ class TestBibtexValidation(unittest.TestCase):
             db_helper.reset_db()
 
     def test_bibtex_file(self):
-        test_book = repositories.todo_repository.create_book(key, title, author, year, publisher, address)
+        test_book = create_book("test1", "Test Author", "Test title", "Test Publisher", 1234, "123 Test St, Testville, CA 99999")
 
         response = self.client.get("/download")
 
