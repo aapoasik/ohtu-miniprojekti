@@ -15,7 +15,7 @@ class TestBibtexValidation(unittest.TestCase):
 
     def tearDown(self):
         with app.app_context():
-            reset_db()
+            db_helper.reset_db()
 
     def test_bibtex_file(self):
             response = self.client.get("/download")
