@@ -1,6 +1,7 @@
 import unittest
 from app import app
 from config import db
+import db_helper
 from repositories.todo_repository import create_book
 
 class TestBibtexValidation(unittest.TestCase):
@@ -8,15 +9,14 @@ class TestBibtexValidation(unittest.TestCase):
         app.config["TESTING"] = True
 
         with app.app_context():
-            db.create_all()
+            setup_db()
 
         self.client = app.test_client()
 
     def tearDown(self):
         with app.app_context():
-            db.session.remove()
-            db.drop_all()
-
+            reset_db()
+            
     def test_bibtex_file(self):
             response = self.client.get("/download")
 
