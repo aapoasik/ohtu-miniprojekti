@@ -1,6 +1,7 @@
 import unittest
-from repositories.todo_repository import create_book
-from src.app import app, db
+from src.repositories.todo_repository import create_book
+from src.app import app
+from src.config import db
 
 @pytest.fixture
 def client():
@@ -28,7 +29,7 @@ class TestBibtexValidation(unittest.TestCase):
 
             self.assertEqual(response.status_code, 200)
             self.assertEqual(response.mimetype, "application/x-bibtex")
-            
+
             assert response.data.decode("utf-8") == """@book{test1,
     author = {Test Author},
     title = {Test title},
