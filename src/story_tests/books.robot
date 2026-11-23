@@ -34,7 +34,7 @@ After editing a book citation, it is displayed on the front page
     Fill Text  [name="title"]  Updated title
     Fill Text  [name="year"]  2025
     Fill Text  [name="publisher"]  Updated publisher
-    Click  button text=Save
+    Click  button >> text=Save
     Get Text  body  *=  Updated title
     Get Text  body  *=  Updated author
     Get Text  body  *=  2025
