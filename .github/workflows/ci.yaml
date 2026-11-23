@@ -4,6 +4,7 @@ env:
   DATABASE_URL: sqlite:///test.db
   TEST_ENV: true
   SECRET_KEY: sekret
+  PYTHONPATH: .
 
 on:
   push:
