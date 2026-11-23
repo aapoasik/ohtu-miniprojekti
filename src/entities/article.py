@@ -13,4 +13,13 @@ class Article:
         self.doi = doi
 
     def __str__(self):
-        return f"{self.title}, {self.author}, {self.year}, {self.journal}"
+        reference = f"{self.title}, {self.author}, {self.year}, {self.journal}"
+        if self.pages:
+            reference += f", pages: {self.pages}"
+        if self.volume:
+            reference += f", volume: {self.volume}"
+        if self.month:
+            reference += f", {self.month}"
+        if self.doi:
+            reference += f", doi: {self.doi}"
+        return reference
