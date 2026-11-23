@@ -228,19 +228,18 @@ def download():
     file_content = """"""
 
     for book in books:
-        file_content += f"""
-@book{{{book.key},
+        file_content += f"""@book{{{book.key},
     author = {{{book.author}}},
     title = {{{book.title}}},
     publisher = {{{book.publisher}}},
     year = {{{book.year}}},
     address = {{{book.address}}}
-    
-}}"""
+}}
+
+"""
 
     for article in articles:
-        file_content += f"""
-@book{{{article.key},
+        file_content += f"""@article{{{article.key},
     author = {{{article.author}}},
     title = {{{article.title}}},
     journal = {{{article.journal}}},
@@ -249,8 +248,9 @@ def download():
     pages = {{{article.pages}}},
     month = {{{article.month}}},
     doi = {{{article.doi}}}
+}}
 
-}}"""
+"""
 
     return Response(file_content, mimetype="application/x-bibtex", headers={"Content-Disposition": "attachment; filename=references.bib"})
 
