@@ -1,22 +1,30 @@
 import unittest, db_helper
 from repositories.todo_repository import create_book
-from app import app, db
+from src.app import app, db
+
+@pytest.fixture
+def client():
+    app.config["TESTING"] = True
+    app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///:memory:"
+    with app.app_context():
+        db.create_all()
+
+        with app.test_client() as client:
+            yield client
+            
+        db.session.remove()
+        db.drop_all()
 
 class TestBibtexValidation(unittest.TestCase):
     def setUp(self):
         self.app_context = app.app_context()
         self.app_context.push()
-        app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///:memory:"
-        with app.app_context():
-            db.create_all()
         test_book = create_book("test1", "Test title", "Test Author", "1234", "Test Publisher", "123 Test St, Testville, CA 99999")
-
 
     def tearDown(self):
         self.app_context.pop()
 
-    def test_bibtex_file(self):
-        with app.test_client() as client:
+    def test_bibtex_file(client):
             response = client.get("/download")
 
             self.assertEqual(response.status_code, 200)
