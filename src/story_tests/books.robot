@@ -37,7 +37,7 @@ After editing a book citation, it is displayed on the front page
     Click  button text=Save
     Get Text  body  *=  Updated title
     Get Text  body  *=  Updated author
-    Get Text  body  *=  Updated year
+    Get Text  body  *=  2025
     Get Text  body  *=  Updated publisher
 
 After deleting a book citation, it is not displayed on the front page anymore
