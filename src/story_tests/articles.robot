@@ -32,12 +32,12 @@ After editing an article citation, it is displayed on the front page
     Fill Text  [name="key"]  Updated key
     Fill Text  [name="author"]  Updated author
     Fill Text  [name="title"]  Updated title
-    Fill Text  [name="year"]  Updated year
+    Fill Text  [name="year"]  2025
     Fill Text  [name="journal"]  Updated journal
     Click  button >> text=Save
     Get Text  body  *=  Updated title
     Get Text  body  *=  Updated author
-    Get Text  body  *=  Updated year
+    Get Text  body  *=  2025
     Get Text  body  *=  Updated journal
 
 After deleting an article citation, it is not displayed on the front page anymore
