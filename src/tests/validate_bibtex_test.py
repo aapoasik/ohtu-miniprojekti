@@ -1,7 +1,7 @@
 import unittest
-from src.repositories.todo_repository import create_book
-from src.app import app
-from src.config import db
+from repositories.todo_repository import create_book
+from app import app
+from config import db
 
 @pytest.fixture
 def client():

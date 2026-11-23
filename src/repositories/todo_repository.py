@@ -1,7 +1,7 @@
-from src.config import db
+from config import db
 from sqlalchemy import text
-from src.entities.article import Article
-from src.entities.book import Book
+from entities.article import Article
+from entities.book import Book
 
 def get_books():
     result = db.session.execute(text("""
