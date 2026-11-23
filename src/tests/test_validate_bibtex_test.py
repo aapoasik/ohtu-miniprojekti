@@ -18,7 +18,8 @@ class TestBibtexValidation(unittest.TestCase):
             db_helper.reset_db()
 
     def test_bibtex_file(self):
-        test_book = create_book("test1", "Test Author", "Test title", "Test Publisher", 1234, "123 Test St, Testville, CA 99999")
+        with app.app_context():
+            test_book = create_book("test1", "Test title", "Test Author", 1234, "Test Publisher", "123 Test St, Testville, CA 99999")
 
         response = self.client.get("/download")
 
