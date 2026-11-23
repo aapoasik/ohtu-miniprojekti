@@ -18,12 +18,14 @@ class TestBibtexValidation(unittest.TestCase):
             db_helper.reset_db()
 
     def test_bibtex_file(self):
-            response = self.client.get("/download")
+        test_book = repositories.todo_repository.create_book(key, title, author, year, publisher, address)
 
-            self.assertEqual(response.status_code, 200)
-            self.assertEqual(response.mimetype, "application/x-bibtex")
+        response = self.client.get("/download")
 
-            self.assertEqual(response.data.decode("utf-8"), """@book{test1,
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.mimetype, "application/x-bibtex")
+
+        self.assertEqual(response.data.decode("utf-8"), """@book{test1,
     author = {Test Author},
     title = {Test title},
     publisher = {Test Publisher},
@@ -32,3 +34,4 @@ class TestBibtexValidation(unittest.TestCase):
 }
 
 """)
+
