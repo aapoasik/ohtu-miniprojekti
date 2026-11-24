@@ -18,7 +18,7 @@ Lisää kommunikaatiota ylipäänsä. Kysymyksiä siitä, mitä tulisi tehdä. K
 
 Lisää backlogin tarkistamista.
 
-# Less off
+## Less off
 
 Ei pull requesteja, jos varma, että koodi toimii.
 
