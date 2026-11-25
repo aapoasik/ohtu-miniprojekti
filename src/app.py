@@ -1,6 +1,8 @@
 from flask import redirect, render_template, request, jsonify, flash, Flask, Response
 from db_helper import reset_db
-from repositories.todo_repository import get_books, get_articles, create_book, create_article, get_book, update_book, get_article, update_article, remove_book, remove_article
+from repositories.todo_repository import (get_books, get_articles, create_book, 
+                                          create_article, get_book, update_book, get_article, 
+                                          update_article, remove_book, remove_article, find_citation)
 from config import app, test_env
 import calendar
 
@@ -126,7 +128,7 @@ def edit_book(book_id):
     book = get_book(book_id)
 
     if request.method == "GET":
-        return render_template("edit_book.html", book=book)
+        return render_template("edit_book.html", book=book, next_page=request.referrer)
     if request.method == "POST":
         key = request.form.get("key")
         author = request.form.get("author")
@@ -134,6 +136,7 @@ def edit_book(book_id):
         year = request.form.get("year")
         publisher = request.form.get("publisher")
         address = request.form.get("address")
+        next_page = request.form["next_page"]
 
         try:
             if not all([key, author, title, year, publisher]):
@@ -141,18 +144,18 @@ def edit_book(book_id):
 
             update_book(book_id, key, title, author, year, publisher, address)
 
-            return redirect("/")
+            return redirect(next_page)
 
         except Exception as error:
             flash(str(error))
-            return redirect(f"/edit_book/{book_id}")
+            return redirect(f"/edit_book/{book_id}", next_page=next_page)
 
 @app.route("/edit_article/<int:article_id>", methods=["GET", "POST"])
 def edit_article(article_id):
     article = get_article(article_id)
 
     if request.method == "GET":
-        return render_template("edit_article.html", article=article)
+        return render_template("edit_article.html", article=article, next_page=request.referrer)
     if request.method == "POST":
         key = request.form.get("key")
         author = request.form.get("author")
@@ -163,6 +166,7 @@ def edit_article(article_id):
         volume = request.form.get("volume")
         month = request.form.get("month")
         doi = request.form.get("doi")
+        next_page = request.form["next_page"]
 
         months = list(calendar.month_name[1:])
         months_abbreviated = ["Sept." if month_name == "September" else f"{month_name[:3]}." if len(month_name) > 4 else month_name for month_name in months]
@@ -190,35 +194,37 @@ def edit_article(article_id):
                 raise ValueError("invalid doi")
             
             update_article(article_id, key, title, author, year, journal, pages, volume, month, doi)
-            return redirect("/")
+            return redirect(next_page)
 
         except Exception as error:
             flash(str(error))
-            return redirect(f"/edit_article/{article_id}")
+            return redirect(f"/edit_article/{article_id}", next_page=next_page)
 
 @app.route("/remove_book/<int:book_id>", methods=["GET", "POST"])
 def delete_book(book_id):
     book = get_book(book_id)
 
     if request.method == "GET":
-        return render_template("remove_book.html", book=book)
+        return render_template("remove_book.html", book=book, next_page=request.referrer)
 
     if request.method == "POST":
+        next_page = request.form["next_page"]
         if "continue" in request.form:
             remove_book(book_id)
-        return redirect("/")
+        return redirect(next_page)
 
 @app.route("/remove_article/<int:article_id>", methods=["GET", "POST"])
 def delete_article(article_id):
     article = get_article(article_id)
 
     if request.method == "GET":
-        return render_template("remove_article.html", article=article)
+        return render_template("remove_article.html", article=article, next_page=request.referrer)
 
     if request.method == "POST":
+        next_page = request.form["next_page"]
         if "continue" in request.form:
             remove_article(article_id)
-        return redirect("/")
+        return redirect(next_page)
     
 @app.route("/download")
 def download():
@@ -253,6 +259,31 @@ def download():
 """
 
     return Response(file_content, mimetype="application/x-bibtex", headers={"Content-Disposition": "attachment; filename=references.bib"})
+
+@app.route("/search_citation")
+def search_citation():
+    query = request.args.get("query", "")
+    selected_book_id = request.args.get("book", type=int)
+    selected_article_id = request.args.get("article", type=int)
+    
+    if query:
+        results = find_citation(query)
+    else:
+        query = ""
+        results = {"articles": [], "books": []}
+    
+    selected_book = next(
+    (book for book in results["books"] if book.id == selected_book_id), None
+    )
+    
+    selected_article = next(
+    (article for article in results["articles"] if article.id == selected_article_id), None)
+    
+    return render_template("search_citation.html", query=query, **results,
+        selected_book=selected_book,
+        selected_book_id=selected_book_id,
+        selected_article=selected_article,
+        selected_article_id=selected_article_id)
 
 # testausta varten oleva reitti
 if test_env:

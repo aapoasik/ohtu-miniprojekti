@@ -43,6 +43,11 @@ Edit a book citation
     <input type="text" name="address" value="{{ book.address }}">
   </div>
   <br>
+  {% if next_page %}
+  <input type="hidden" name="next_page" value="{{ next_page }}" />
+  {% else %}
+  <input type="hidden" name="next_page" value="/" />
+  {% endif %}
   <button type="submit">
     Save
   </button>

@@ -140,3 +140,41 @@ def remove_article(article_id):
     db.session.execute(sql, {
             "id": article_id})
     db.session.commit()
+
+def find_citation(query):
+
+    like = "%" + query + "%"
+    books_sql = text("""SELECT id, key, title, author, year, publisher, address
+            FROM Books WHERE key
+             LIKE :cond OR title LIKE :cond OR author LIKE :cond 
+             OR year LIKE :cond OR publisher LIKE :cond OR address LIKE :cond
+             ORDER BY id DESC
+            """)
+    books_result = db.session.execute(books_sql, {"cond": like}).fetchall()
+    books = [
+        Book(
+            book[0], book[1], book[2], book[3],
+            book[4], book[5], book[6]
+        )
+        for book in books_result
+    ]
+
+    articles_sql = text("""SELECT id, key, title, author, year,
+                journal, pages, volume, month, doi
+                FROM Articles WHERE key
+                LIKE :cond OR title LIKE :cond OR author LIKE :cond 
+                OR year LIKE :cond OR journal LIKE :cond OR pages LIKE :cond
+                OR volume LIKE :cond OR month LIKE :cond OR doi LIKE :cond
+                ORDER BY id DESC
+                """)
+    articles_result = db.session.execute(articles_sql, {"cond": like}).fetchall()
+
+    articles = [Article(
+                article[0], article[1], article[2], article[3],
+                article[4], article[5], article[6], article[7],
+                article[8], article[9]
+            )
+            for article in articles_result
+        ]
+    return {"books": books,
+        "articles": articles}
