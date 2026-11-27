@@ -4,6 +4,13 @@ from repositories.todo_repository import get_books, get_articles, create_book, c
 from config import app, test_env
 import calendar
 
+def get_surname(author):
+    if not author or not author.strip():
+        return ""
+
+    name_parts = author.strip().split()
+    return name_parts[-1].casefold()
+
 @app.route("/")
 def index():
     books = get_books()
@@ -11,26 +18,38 @@ def index():
 
     books_order = request.args.get("books_order", "asc")
     articles_order = request.args.get("articles_order", "asc")
-
+    books_sort = request.args.get("books_sort", "title")
+    articles_sort = request.args.get("articles_sort", "title")
+    
     books = sorted(
         books,
-        key=lambda book: book.title.casefold(),
-        reverse=(books_order == "desc")
-    )
+        key=lambda book: (
+            get_surname(book.author)
+            if books_sort == "author"
+            else book.title.casefold()
+            ),
+            reverse=(books_order == "desc")
+            )
 
     articles = sorted(
         articles,
-        key=lambda article: article.title.casefold(),
-        reverse=(articles_order == "desc")
-    )
+        key=lambda article: (
+            get_surname(article.author)
+            if articles_sort == "author"
+            else article.title.casefold()
+            ),
+            reverse=(articles_order == "desc")
+            )
 
     return render_template(
         "index.html",
         books=books,
         articles=articles,
         books_order=books_order,
-        articles_order=articles_order
-    )
+        articles_order=articles_order,
+        books_sort=books_sort,
+        articles_sort=articles_sort,
+        )
 
 @app.route("/new_book")
 def new():

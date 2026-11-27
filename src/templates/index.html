@@ -8,11 +8,19 @@
 <h3>Books</h3>
 
 <form action="/" method="get">
-    <label>Sort books:</label>
+    <label>Sort books by:</label>
+
+    <select name="books_sort" onchange="this.form.submit()">
+        <option value="title" {% if books_sort == "title" %}selected{% endif %}>Title</option>
+        <option value="author" {% if books_sort == "author" %}selected{% endif %}>Author surname</option>
+    </select>
+
     <select name="books_order" onchange="this.form.submit()">
         <option value="asc" {% if books_order == "asc" %}selected{% endif %}>A-Ö</option>
         <option value="desc" {% if books_order == "desc" %}selected{% endif %}>Ö-A</option>
     </select>
+
+    <input type="hidden" name="articles_sort" value="{{ articles_sort }}">
     <input type="hidden" name="articles_order" value="{{ articles_order }}">
 </form>
 
@@ -29,11 +37,19 @@
 <h3>Articles</h3>
 
 <form action="/" method="get">
-    <label>Sort articles:</label>
+    <label>Sort articles by:</label>
+
+    <select name="articles_sort" onchange="this.form.submit()">
+        <option value="title" {% if articles_sort == "title" %}selected{% endif %}>Title</option>
+        <option value="author" {% if articles_sort == "author" %}selected{% endif %}>Author surname</option>
+    </select>
+
     <select name="articles_order" onchange="this.form.submit()">
         <option value="asc" {% if articles_order == "asc" %}selected{% endif %}>A-Ö</option>
         <option value="desc" {% if articles_order == "desc" %}selected{% endif %}>Ö-A</option>
     </select>
+
+    <input type="hidden" name="books_sort" value="{{ books_sort }}">
     <input type="hidden" name="books_order" value="{{ books_order }}">
 </form>
 
