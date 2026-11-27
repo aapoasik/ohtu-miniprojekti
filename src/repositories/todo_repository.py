@@ -178,3 +178,122 @@ def find_citation(query):
         ]
     return {"books": books,
         "articles": articles}
+
+def get_tags():
+    sql = text("""
+        SELECT id, name FROM Tags
+        ORDER BY name
+    """)
+    result = db.session.execute(sql).fetchall()
+
+    return [
+        {"id": tag[0], "name": tag[1]}
+        for tag in result
+    ]
+
+
+def create_tag(name):
+    name = name.strip()
+
+    if not name:
+        return None
+
+    sql = text("""
+        INSERT OR IGNORE INTO Tags (name)
+        VALUES (:name)
+    """)
+    db.session.execute(sql, {"name": name})
+    db.session.commit()
+
+    result = db.session.execute(
+        text("SELECT id FROM Tags WHERE name = :name"),
+        {"name": name}
+    ).fetchone()
+
+    return result[0]
+
+
+def delete_tag(tag_id):
+    db.session.execute(
+        text("DELETE FROM BookTags WHERE tag_id = :tag_id"),
+        {"tag_id": tag_id}
+    )
+    db.session.execute(
+        text("DELETE FROM ArticleTags WHERE tag_id = :tag_id"),
+        {"tag_id": tag_id}
+    )
+    db.session.execute(
+        text("DELETE FROM Tags WHERE id = :tag_id"),
+        {"tag_id": tag_id}
+    )
+    db.session.commit()
+
+
+def get_book_tags(book_id):
+    sql = text("""
+        SELECT Tags.id, Tags.name
+        FROM Tags
+        JOIN BookTags ON Tags.id = BookTags.tag_id
+        WHERE BookTags.book_id = :book_id
+        ORDER BY Tags.name
+    """)
+    result = db.session.execute(sql, {"book_id": book_id}).fetchall()
+
+    return [
+        {"id": tag[0], "name": tag[1]}
+        for tag in result
+    ]
+
+
+def get_article_tags(article_id):
+    sql = text("""
+        SELECT Tags.id, Tags.name
+        FROM Tags
+        JOIN ArticleTags ON Tags.id = ArticleTags.tag_id
+        WHERE ArticleTags.article_id = :article_id
+        ORDER BY Tags.name
+    """)
+    result = db.session.execute(
+        sql, {"article_id": article_id}
+    ).fetchall()
+
+    return [
+        {"id": tag[0], "name": tag[1]}
+        for tag in result
+    ]
+
+
+def set_book_tags(book_id, tag_ids):
+    db.session.execute(
+        text("DELETE FROM BookTags WHERE book_id = :book_id"),
+        {"book_id": book_id}
+    )
+
+    for tag_id in set(tag_ids):
+        db.session.execute(text("""
+            INSERT OR IGNORE INTO BookTags (book_id, tag_id)
+            SELECT :book_id, id FROM Tags WHERE id = :tag_id
+        """), {
+            "book_id": book_id,
+            "tag_id": tag_id
+        })
+
+    db.session.commit()
+
+
+def set_article_tags(article_id, tag_ids):
+    db.session.execute(
+        text("DELETE FROM ArticleTags WHERE article_id = :article_id"),
+        {"article_id": article_id}
+    )
+
+    for tag_id in set(tag_ids):
+        db.session.execute(text("""
+            INSERT OR IGNORE INTO ArticleTags (article_id, tag_id)
+            SELECT :article_id, id FROM Tags WHERE id = :tag_id
+        """), {
+            "article_id": article_id,
+            "tag_id": tag_id
+        })
+
+    db.session.commit()

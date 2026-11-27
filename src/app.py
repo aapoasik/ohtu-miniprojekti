@@ -1,8 +1,10 @@
 from flask import redirect, render_template, request, jsonify, flash, Flask, Response
 from db_helper import reset_db
-from repositories.todo_repository import (get_books, get_articles, create_book, 
+from repositories.todo_repository import (get_books, get_articles, create_book,
                                           create_article, get_book, update_book, get_article, 
-                                          update_article, remove_book, remove_article, find_citation)
+                                          update_article, remove_book, remove_article, find_citation,
+                                          get_tags, create_tag, delete_tag, get_book_tags, get_article_tags,
+                                          set_book_tags, set_article_tags)
 from config import app, test_env
 import calendar
 
@@ -10,6 +12,7 @@ import calendar
 def index():
     books = get_books()
     articles = get_articles()
+    tags = get_tags()
 
     books_order = request.args.get("books_order", "asc")
     articles_order = request.args.get("articles_order", "asc")
@@ -18,37 +21,43 @@ def index():
 
     selected_book = next(
         (book for book in books if book.id == selected_book_id),
-        None
-    )
+        None)
 
     selected_article = next(
         (article for article in articles if article.id == selected_article_id),
-        None
-    )
+        None)
 
     books = sorted(
         books,
         key=lambda book: book.title.casefold(),
-        reverse=(books_order == "desc")
-    )
+        reverse=(books_order == "desc"))
 
     articles = sorted(
         articles,
         key=lambda article: article.title.casefold(),
-        reverse=(articles_order == "desc")
-    )
+        reverse=(articles_order == "desc"))
+
+    books_tags = {
+        book.id: get_book_tags(book.id)
+        for book in books}
+
+    articles_tags = {
+        article.id: get_article_tags(article.id)
+        for article in articles}
 
     return render_template(
         "index.html",
         books=books,
         articles=articles,
+        tags=tags,
         books_order=books_order,
         articles_order=articles_order,
         selected_book=selected_book,
         selected_book_id=selected_book_id,
         selected_article=selected_article,
-        selected_article_id=selected_article_id
-    )
+        selected_article_id=selected_article_id,
+        books_tags=books_tags,
+        articles_tags=articles_tags)
 
 @app.route("/new_book")
 def new():
@@ -284,6 +293,38 @@ def search_citation():
         selected_book_id=selected_book_id,
         selected_article=selected_article,
         selected_article_id=selected_article_id)
+
+@app.route("/create_tag", methods=["POST"])
+def tag_creation():
+    name = request.form.get("name", "")
+
+    try:
+        if not name.strip():
+            raise ValueError("Tag name cannot be empty")
+
+        create_tag(name)
+        return redirect(request.referrer or "/")
+
+    except Exception as error:
+        flash(str(error))
+        return redirect(request.referrer or "/")
+
+@app.route("/delete_tag/<int:tag_id>", methods=["POST"])
+def tag_deletion(tag_id):
+    delete_tag(tag_id)
+    return redirect(request.referrer or "/")
+
+@app.route("/set_book_tags/<int:book_id>", methods=["POST"])
+def book_tags_update(book_id):
+    tag_ids = request.form.getlist("tag_ids", type=int)
+    set_book_tags(book_id, tag_ids)
+    return redirect(request.referrer or "/")
+
+@app.route("/set_article_tags/<int:article_id>", methods=["POST"])
+def article_tags_update(article_id):
+    tag_ids = request.form.getlist("tag_ids", type=int)
+    set_article_tags(article_id, tag_ids)
+    return redirect(request.referrer or "/")
 
 # testausta varten oleva reitti
 if test_env:
