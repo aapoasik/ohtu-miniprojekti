@@ -11,6 +11,11 @@ Remove an article citation
     <p>
       Do you want to remove article citation?
     </p>
+    {% if next_page %}
+    <input type="hidden" name="next_page" value="{{ next_page }}" />
+    {% else %}
+    <input type="hidden" name="next_page" value="/" />
+    {% endif %}
     <input type="submit" name="continue" value="Continue" />
     <input type="submit" name="cancel" value="Cancel" />
   </form>

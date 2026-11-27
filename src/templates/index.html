@@ -1,9 +1,27 @@
 
 {% extends "layout.html" %}
-{% block title %} Todo app {% endblock %}
+{% block title %} References manager {% endblock %}
 {% block body %}
 
 <h2>Citation app</h2>
+
+<h3>Manage tags</h3>
+
+<form action="/create_tag" method="post">
+    <input type="text" name="name" placeholder="New tag name" required>
+    <button type="submit">Create tag</button>
+</form>
+
+<ul>
+    {% for tag in tags %}
+    <li>
+        {{ tag.name }}
+        <form action="/delete_tag/{{ tag.id }}" method="post" style="display: inline;">
+            <button type="submit">Delete</button>
+        </form>
+    </li>
+    {% endfor %}
+</ul>
 
 <h3>Books</h3>
 
@@ -28,8 +46,42 @@
     {% for book in books %}
     <li>
         <p>{{ book }}</p>
+<div>
+    <strong>Tags:</strong>
+
+    {% for tag in books_tags[book.id] %}
+        <span>{{ tag.name }}</span>
+    {% endfor %}
+
+    <form action="/set_book_tags/{{ book.id }}" method="post">
+        {% for tag in tags %}
+            <label>
+                <input type="checkbox" name="tag_ids" value="{{ tag.id }}"
+                {% if tag.id in books_tags[book.id]|map(attribute='id')|list %}checked{% endif %}>
+                {{ tag.name }}
+            </label>
+        {% endfor %}
+        <button type="submit">Save tags</button>
+    </form>
+</div>
+
+        {% if selected_book and selected_book_id == book.id %}
+            <div>
+                <pre>
+@book&#123;{{ book.key }},
+    author = &#123;{{ book.author }}&#125;,
+    title = &#123;{{ book.title }}&#125;,
+    publisher = &#123;{{ book.publisher }}&#125;,
+    year = &#123;{{ book.year }}&#125;,
+    address = &#123;{{ book.address }}&#125;
+&#125;
+                </pre>
+            </div>
+        {% endif %}
+
         <a href="/edit_book/{{ book.id }}">Edit</a> |
-        <a href="/remove_book/{{ book.id }}">Delete</a>
+        <a href="/remove_book/{{ book.id }}">Delete</a> |
+        <a href="/?book={{ book.id }}">View BibTeX</a>
     </li>
     {% endfor %}
 </ul>
@@ -57,18 +109,62 @@
     {% for article in articles %}
     <li>
         <p>{{ article }}</p>
+
+<div>
+    <strong>Tags:</strong>
+
+    {% for tag in articles_tags[article.id] %}
+        <span>{{ tag.name }}</span>
+    {% endfor %}
+
+    <form action="/set_article_tags/{{ article.id }}" method="post">
+        {% for tag in tags %}
+            <label>
+                <input type="checkbox" name="tag_ids" value="{{ tag.id }}"
+                {% if tag.id in articles_tags[article.id]|map(attribute='id')|list %}checked{% endif %}>
+                {{ tag.name }}
+            </label>
+        {% endfor %}
+        <button type="submit">Save tags</button>
+    </form>
+</div>
+
+        {% if selected_article and selected_article_id == article.id %}
+            <div>
+                <pre>
+@article&#123;{{ article.key }},
+    author = &#123;{{ article.author }}&#125;,
+    title = &#123;{{ article.title }}&#125;,
+    year = &#123;{{ article.year }}&#125;,
+    journal = &#123;{{ article.journal }}&#125;
+    volume = &#123;{{ article.volume }}&#125;,
+    number = &#123;{{ article.number }}&#125;,
+    pages = &#123;{{ article.pages }}&#125;,
+    month = &#123;{{ article.month }}&#125;
+    doi = &#123;{{ article.doi }}&#125;,
+&#125;
+                </pre>
+            </div>
+        {% endif %}
+
         <a href="/edit_article/{{ article.id }}">Edit</a> |
-        <a href="/remove_article/{{ article.id }}">Delete</a>
+        <a href="/remove_article/{{ article.id }}">Delete</a> |
+        <a href="/?article={{ article.id }}">View BibTeX</a>
     </li>
     {% endfor %}
 </ul>
 
 <div>
+    <a href="/search_citation">Search citation</a>
+</div>
+<div>
     <a href="/new_book">Create new book citation</a>
 </div>
-
 <div>
     <a href="/new_article">Create new article citation</a>
 </div>
 
+<div>
+    <a href="/download">Download references as a BibTeX file</a>
+</div>
 {% endblock %}

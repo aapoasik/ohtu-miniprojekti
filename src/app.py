@@ -1,6 +1,10 @@
-from flask import redirect, render_template, request, jsonify, flash
+from flask import redirect, render_template, request, jsonify, flash, Flask, Response
 from db_helper import reset_db
-from repositories.todo_repository import get_books, get_articles, create_book, create_article, get_book, update_book, get_article, update_article, remove_book, remove_article
+from repositories.todo_repository import (get_books, get_articles, create_book,
+                                          create_article, get_book, update_book, get_article, 
+                                          update_article, remove_book, remove_article, find_citation,
+                                          get_tags, create_tag, delete_tag, get_book_tags, get_article_tags,
+                                          set_book_tags, set_article_tags)
 from config import app, test_env
 import calendar
 
@@ -15,21 +19,32 @@ def get_surname(author):
 def index():
     books = get_books()
     articles = get_articles()
+    tags = get_tags()
 
     books_order = request.args.get("books_order", "asc")
     articles_order = request.args.get("articles_order", "asc")
     books_sort = request.args.get("books_sort", "title")
     articles_sort = request.args.get("articles_sort", "title")
-    
+
+    selected_book_id = request.args.get("book", type=int)
+    selected_article_id = request.args.get("article", type=int)
+
+    selected_book = next(
+        (book for book in books if book.id == selected_book_id),
+        None)
+
+    selected_article = next(
+        (article for article in articles if article.id == selected_article_id),
+        None)
+
     books = sorted(
         books,
         key=lambda book: (
             get_surname(book.author)
             if books_sort == "author"
             else book.title.casefold()
-            ),
-            reverse=(books_order == "desc")
-            )
+        ),
+        reverse=(books_order == "desc"))
 
     articles = sorted(
         articles,
@@ -37,18 +52,32 @@ def index():
             get_surname(article.author)
             if articles_sort == "author"
             else article.title.casefold()
-            ),
-            reverse=(articles_order == "desc")
-            )
+        ),
+        reverse=(articles_order == "desc"))
+
+    books_tags = {
+        book.id: get_book_tags(book.id)
+        for book in books}
+
+    articles_tags = {
+        article.id: get_article_tags(article.id)
+        for article in articles}
 
     return render_template(
         "index.html",
         books=books,
         articles=articles,
+        tags=tags,
         books_order=books_order,
         articles_order=articles_order,
         books_sort=books_sort,
         articles_sort=articles_sort,
+        selected_book=selected_book,
+        selected_book_id=selected_book_id,
+        selected_article=selected_article,
+        selected_article_id=selected_article_id,
+        books_tags=books_tags,
+        articles_tags=articles_tags
         )
 
 @app.route("/new_book")
@@ -92,7 +121,7 @@ def article_creation():
     doi = request.form.get("doi")
 
     months = list(calendar.month_name[1:])
-    months_abbreviated = [f"{month[:4]}." if len(month) > 4 else month for month in months]
+    months_abbreviated = ["Sept." if month_name == "September" else f"{month_name[:3]}." if len(month_name) > 4 else month_name for month_name in months]
 
     try:
         if not all([key, author, title, year, journal]):
@@ -129,7 +158,7 @@ def edit_book(book_id):
     book = get_book(book_id)
 
     if request.method == "GET":
-        return render_template("edit_book.html", book=book)
+        return render_template("edit_book.html", book=book, next_page=request.referrer)
     if request.method == "POST":
         key = request.form.get("key")
         author = request.form.get("author")
@@ -137,6 +166,7 @@ def edit_book(book_id):
         year = request.form.get("year")
         publisher = request.form.get("publisher")
         address = request.form.get("address")
+        next_page = request.form["next_page"]
 
         try:
             if not all([key, author, title, year, publisher]):
@@ -144,18 +174,18 @@ def edit_book(book_id):
 
             update_book(book_id, key, title, author, year, publisher, address)
 
-            return redirect("/")
+            return redirect(next_page)
 
         except Exception as error:
             flash(str(error))
-            return redirect(f"/edit_book/{book_id}")
+            return redirect(f"/edit_book/{book_id}", next_page=next_page)
 
 @app.route("/edit_article/<int:article_id>", methods=["GET", "POST"])
 def edit_article(article_id):
     article = get_article(article_id)
 
     if request.method == "GET":
-        return render_template("edit_article.html", article=article)
+        return render_template("edit_article.html", article=article, next_page=request.referrer)
     if request.method == "POST":
         key = request.form.get("key")
         author = request.form.get("author")
@@ -166,58 +196,157 @@ def edit_article(article_id):
         volume = request.form.get("volume")
         month = request.form.get("month")
         doi = request.form.get("doi")
+        next_page = request.form["next_page"]
+
         months = list(calendar.month_name[1:])
+        months_abbreviated = ["Sept." if month_name == "September" else f"{month_name[:3]}." if len(month_name) > 4 else month_name for month_name in months]
 
         try:
             if not all([key, author, title, year, journal]):
                 raise ValueError("Please fill in all required fields")
-                
+        
             if not all([key.strip(), author.strip(), title.strip(), year.strip(), journal.strip()]):
                 raise ValueError("Must not contain only spaces")
-                    
+            
             if len(year) != 4 or not year.isdigit():
                 raise ValueError("Enter only 4 digits")
-                    
-            if month and month not in months:
-                raise ValueError("Invalid month")
-                    
+            
             if volume and not volume.isdigit():
                 raise ValueError("Invalid volume")
-                    
-            if doi and (not doi.startswith("10.") or "/" not in doi):
+            
+            if month and (not month.strip() or (month not in months and month not in months_abbreviated)):
+                raise ValueError("Invalid month")
+            
+            if pages and (not pages.strip() or not any(page.isdigit() for page in pages)):
+                raise ValueError("Invalid pages")
+            
+            if doi and (not doi.strip() or not "10." in doi or not "/" in doi):
                 raise ValueError("invalid doi")
             
             update_article(article_id, key, title, author, year, journal, pages, volume, month, doi)
-            return redirect("/")
+            return redirect(next_page)
 
         except Exception as error:
             flash(str(error))
-            return redirect(f"/edit_article/{article_id}")
+            return redirect(f"/edit_article/{article_id}", next_page=next_page)
 
 @app.route("/remove_book/<int:book_id>", methods=["GET", "POST"])
 def delete_book(book_id):
     book = get_book(book_id)
 
     if request.method == "GET":
-        return render_template("remove_book.html", book=book)
+        return render_template("remove_book.html", book=book, next_page=request.referrer)
 
     if request.method == "POST":
+        next_page = request.form["next_page"]
         if "continue" in request.form:
             remove_book(book_id)
-        return redirect("/")
+        return redirect(next_page)
 
 @app.route("/remove_article/<int:article_id>", methods=["GET", "POST"])
 def delete_article(article_id):
     article = get_article(article_id)
 
     if request.method == "GET":
-        return render_template("remove_article.html", article=article)
+        return render_template("remove_article.html", article=article, next_page=request.referrer)
 
     if request.method == "POST":
+        next_page = request.form["next_page"]
         if "continue" in request.form:
             remove_article(article_id)
-        return redirect("/")
+        return redirect(next_page)
     
+@app.route("/download")
+def download():
+    books = get_books()
+    articles = get_articles()
+
+    file_content = """"""
+
+    for book in books:
+        file_content += f"""@book{{{book.key},
+    author = {{{book.author}}},
+    title = {{{book.title}}},
+    publisher = {{{book.publisher}}},
+    year = {{{book.year}}},
+    address = {{{book.address}}}
+}}
+
+"""
+
+    for article in articles:
+        file_content += f"""@article{{{article.key},
+    author = {{{article.author}}},
+    title = {{{article.title}}},
+    journal = {{{article.journal}}},
+    year = {{{article.year}}},
+    volume = {{{article.volume}}},
+    pages = {{{article.pages}}},
+    month = {{{article.month}}},
+    doi = {{{article.doi}}}
+}}
+
+"""
+
+    return Response(file_content, mimetype="application/x-bibtex", headers={"Content-Disposition": "attachment; filename=references.bib"})
+
+@app.route("/search_citation")
+def search_citation():
+    query = request.args.get("query", "")
+    selected_book_id = request.args.get("book", type=int)
+    selected_article_id = request.args.get("article", type=int)
+    
+    if query:
+        results = find_citation(query)
+    else:
+        query = ""
+        results = {"articles": [], "books": []}
+    
+    selected_book = next(
+    (book for book in results["books"] if book.id == selected_book_id), None
+    )
+    
+    selected_article = next(
+    (article for article in results["articles"] if article.id == selected_article_id), None)
+    
+    return render_template("search_citation.html", query=query, **results,
+        selected_book=selected_book,
+        selected_book_id=selected_book_id,
+        selected_article=selected_article,
+        selected_article_id=selected_article_id)
+
+@app.route("/create_tag", methods=["POST"])
+def tag_creation():
+    name = request.form.get("name", "")
+
+    try:
+        if not name.strip():
+            raise ValueError("Tag name cannot be empty")
+
+        create_tag(name)
+        return redirect(request.referrer or "/")
+
+    except Exception as error:
+        flash(str(error))
+        return redirect(request.referrer or "/")
+
+@app.route("/delete_tag/<int:tag_id>", methods=["POST"])
+def tag_deletion(tag_id):
+    delete_tag(tag_id)
+    return redirect(request.referrer or "/")
+
+@app.route("/set_book_tags/<int:book_id>", methods=["POST"])
+def book_tags_update(book_id):
+    tag_ids = request.form.getlist("tag_ids", type=int)
+    set_book_tags(book_id, tag_ids)
+    return redirect(request.referrer or "/")
+
+@app.route("/set_article_tags/<int:article_id>", methods=["POST"])
+def article_tags_update(article_id):
+    tag_ids = request.form.getlist("tag_ids", type=int)
+    set_article_tags(article_id, tag_ids)
+    return redirect(request.referrer or "/")
+
 # testausta varten oleva reitti
 if test_env:
     @app.route("/reset_db")

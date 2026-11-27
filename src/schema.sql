@@ -20,3 +20,24 @@ CREATE TABLE Articles (
   month TEXT,
   doi TEXT
   );
+
+  CREATE TABLE Tags (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  name TEXT NOT NULL UNIQUE
+);
+
+CREATE TABLE BookTags (
+  book_id INTEGER NOT NULL,
+  tag_id INTEGER NOT NULL,
+  PRIMARY KEY (book_id, tag_id),
+  FOREIGN KEY (book_id) REFERENCES Books(id) ON DELETE CASCADE,
+  FOREIGN KEY (tag_id) REFERENCES Tags(id) ON DELETE CASCADE
+);
+
+CREATE TABLE ArticleTags (
+  article_id INTEGER NOT NULL,
+  tag_id INTEGER NOT NULL,
+  PRIMARY KEY (article_id, tag_id),
+  FOREIGN KEY (article_id) REFERENCES Articles(id) ON DELETE CASCADE,
+  FOREIGN KEY (tag_id) REFERENCES Tags(id) ON DELETE CASCADE
+);
